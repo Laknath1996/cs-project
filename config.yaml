@@ -1,0 +1,8 @@
+deploy: True
+device: "cuda:1"
+seed: 1996
+lr: 1e-5
+batch_size: 128
+epochs: 5
+freeze: True
+workers: 4

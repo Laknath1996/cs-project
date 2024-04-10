@@ -39,7 +39,8 @@ class Trainer:
         self.loss_function = torch.nn.CrossEntropyLoss()
         self.optimizer = torch.optim.Adam(
             self.model.parameters(),
-            lr=args.lr
+            lr=args.lr,
+            weight_decay=args.weight_decay
         )
         
     def finetune(self):
@@ -85,7 +86,6 @@ class Trainer:
             }
             print(info)
 
-
     def evaluate(self):
         device = self.device
 
@@ -93,17 +93,22 @@ class Trainer:
 
         num_correct_preds = 0
         num_test_samples = 0
+        progress = tqdm(enumerate(self.testloader), total=len(self.testloader))
         with torch.no_grad():
-            for data in self.testloader:
+            for i, data in progress:
                 ids = data['input_ids'].long().to(device)
                 masks = data['attention_mask'].long().to(device)
-                targets = data['label'].int().to(device)
+                targets = data['label'].long().to(device)
                 batchsize = len(targets)
 
                 outputs = self.model(ids, masks)
 
                 num_test_samples += batchsize
                 num_correct_preds += (torch.argmax(outputs, axis=1) == targets).detach().cpu().numpy().sum()
+
+                progress.set_description(
+                    f"[{i + 1}/{len(self.testloader)}] "
+                )
 
         info = {
             "test_acc" : np.round(num_correct_preds/num_test_samples, 4)

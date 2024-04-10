@@ -1,8 +1,10 @@
+run: "full-finetuning"
 deploy: True
 device: "cuda:1"
 seed: 1996
-lr: 1e-5
+lr: 5e-4
+weight_decay: 0.1
 batch_size: 128
-epochs: 5
+epochs: 60
 freeze: True
 workers: 4

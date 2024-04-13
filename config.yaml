@@ -1,10 +1,16 @@
-run: "full-finetuning"
-deploy: True
+run: "lora-ft" # partial-ft, full-ft
 device: "cuda:1"
 seed: 1996
-lr: 5e-4
-weight_decay: 0.1
-batch_size: 128
+workers: 8
+
+# train params
+lr: 2e-5
+warmup_ratio: 0.06
+weight_decay: 0.01
+batch_size: 16
+dropout: 0.1
 epochs: 60
-freeze: True
-workers: 4
+
+# lora params
+lora_alpha: 8
+lora_r: 8

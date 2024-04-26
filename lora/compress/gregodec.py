@@ -34,13 +34,15 @@ class GreGoDec:
         rankk = np.round(self.rank/self.k).astype('int')
         error = np.zeros((rankk*self.power, 1))
         X, s, Y = scp.sparse.linalg.svds(self.D, k=self.k, which='LM')
+        X = -X
+        Y = -Y
         s = np.diag(s)
         X = X @ s
         L = X @ Y
         S = self.wthresh(D - L, self.tau)
         T = D - L - S
         error[0] = self.norm(T.ravel())/normD
-        iii = 0
+        iii = 1
         stop = False
         alf = 0
 
@@ -56,11 +58,11 @@ class GreGoDec:
             maxitr_reduce_rank = 50
             if iii == self.power * (r-2)+1:
                 iii += self.power
-            for iter in range(1, self.power+1):
+            for iter in range(1, self.power+1, 1):
                 # update of X
                 X = L @ Y.T
                 if est_rank == 1:
-                    X, R, E = scp.linalg.qr(X, pivoting=True)
+                    X, R, E = scp.linalg.qr(X, mode="economic", pivoting=True)
                 else:
                     X, R = scp.linalg.qr(X, pivoting=False)
 
@@ -75,8 +77,8 @@ class GreGoDec:
                 # error, stopping criteria
                 T = T - S
                 ii = iii + iter
-                error[ii] = self.norm(T.ravel())/normD
-                if error[ii] < self.tol:
+                error[ii-1] = self.norm(T.ravel())/normD
+                if error[ii-1] < self.tol:
                     stop = True
                     break
                 
@@ -85,21 +87,24 @@ class GreGoDec:
                     if est_rank == 1:
                         dR = abs(np.diag(R))
                         drops = dR[:-1] / dR[1:]
-                        dmx = np.max(drops)
-                        imx = np.argmax(drops)
-                        rel_drp = (self.rank - 1) * dmx / (drops.sum() - dmx)
+                        dmx = np.max(drops, initial=0)
+                        imx = [] if len(drops) == 0 else np.argmax(drops)
+                        nom = (self.rank - 1) * dmx
+                        denom = drops.sum() - dmx
+                        rel_drp = np.divide(nom, denom, out=np.zeros_like(nom), where=denom!=0)
+                        # rel_drp = (self.rank - 1) * dmx / (drops.sum() - dmx)
                         if (rel_drp > rk_jump and itr_rank > minitr_reduce_rank) or (itr_rank > maxitr_reduce_rank):
                             rrank = np.max([imx, np.floor(0.1 * self.rank), rank_min])
-                            error[ii] = self.norm(res)/normz
+                            error[ii-1] = self.norm(res)/normz
                             est_rank = 0
                             itr_rank = 0
 
                 if rrank != self.rank:
-                    rank = rrank
+                    self.rank = rrank
                     if est_rank == 0:
                         alf = 0
                         continue
-                ratio = error[ii]/error[ii-1]
+                ratio = error[ii-1]/error[ii-1-1]
                 if ratio >= 1.1:
                     increment = np.maximum(0.1 * alf, 0.1 * increment)
                     X = X1
@@ -107,7 +112,7 @@ class GreGoDec:
                     L = L1
                     S = S1
                     T = T1
-                    error[ii] = error[ii-1]
+                    error[ii-1] = error[ii-1-1]
                     alf = 0
                 elif ratio > 0.7:
                     increment = max(increment, 0.25 * alf)
@@ -123,12 +128,12 @@ class GreGoDec:
 
                 # add coreset
                 if iter > 8:
-                    if np.mean(error[ii-7:ii])/error[ii-8] > 0.92:
-                        iii = ii
+                    if np.mean(error[ii-7-1:ii-1])/error[ii-8-1] > 0.92:
+                        iii = ii-1
                         sf = X.shape[1]
                         if Y.shape[0] - sf >= self.k:
                             Y = Y[:sf, :]
-                            break
+                        break
             if stop:
                 break
 
@@ -144,27 +149,27 @@ class GreGoDec:
         return X, Y, S, error
 
 def main():
-    from lora.models.roberta import get_model   
+    from lora.models.roberta_pretrained import get_model   
     from omegaconf import OmegaConf
     import numpy as np
     from scipy.special import softmax
     import matplotlib.pyplot as plt
 
-    args = OmegaConf.load('/cis/home/adesilva/ashwin/research/cs-project/config.yaml')
-    model = get_model(args)
+    B_list = scp.io.loadmat("notebooks/B_list.mat")['B']
+    B = B_list[0]
 
-    Wq = model.encoder.encoder.layer[-1].attention.self.query.weight.numpy()
-    Wk = model.encoder.encoder.layer[-1].attention.self.key.weight.numpy()
-    B = Wq @ Wk.T
+    # B = scp.io.loadmat("notebooks/B.mat")['B']
 
     U, V, S, error = GreGoDec(
         D = B,
-        rank = 100,
-        tau = 0.5,
-        tol = 1e-2, 
-        power = 10,
+        rank = 10,
+        tau = 0.1,
+        tol = 0.001, 
+        power = 100,
         k = 5
     ).fit()
+
+    print(V.shape)
 
     np.random.seed(1996)
     X = np.random.randn(128, B.shape[0])

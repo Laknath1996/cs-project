@@ -8,10 +8,10 @@ from datasets import load_dataset
 import numpy as np
 from tqdm import tqdm
 
-from lora.models.roberta import get_model
+# from lora.models.roberta_pretrained import get_model
+from lora.models.roberta_scratch import get_model
 from lora.utils import init_torch_seeds
 from lora.utils import linear_schedule_with_warmup
-
 
 class Trainer:
     def __init__(self, args, log) -> None:
@@ -166,3 +166,21 @@ class Trainer:
                 progress.set_description(f"[{i + 1}/{len(self.testloader)}] ")
 
         return num_correct_preds / num_test_samples
+
+
+# def main():
+#     import logging
+#     import hydra
+
+#     log = logging.getLogger(__name__)
+
+#     @hydra.main(config_name='config.yaml')
+#     def main(args):
+#         log.info(f"{args}")
+#         trainer = Trainer(args, log)
+#         trainer.finetune()
+#         trainer.evaluate()
+
+
+# if __name__ == "__main__":
+#     main()

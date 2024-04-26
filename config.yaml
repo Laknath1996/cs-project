@@ -1,13 +1,13 @@
-run: "lora-ft" # partial-ft, full-ft
+run: "scratch" # partial-ft, full-ft, lora-ft
 device: "cuda:1"
 seed: 1996
 workers: 8
 
 # train params
-lr: 2e-5
+lr: 2e-5 # 2e-5
 warmup_ratio: 0.06
 weight_decay: 0.01
-batch_size: 16
+batch_size: 32
 dropout: 0.1
 epochs: 60
 

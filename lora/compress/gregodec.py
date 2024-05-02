@@ -64,7 +64,7 @@ class GreGoDec:
                 if est_rank == 1:
                     X, R, E = scp.linalg.qr(X, mode="economic", pivoting=True)
                 else:
-                    X, R = scp.linalg.qr(X, pivoting=False)
+                    X, R = scp.linalg.qr(X, mode="economic", pivoting=False)
 
                 # update of Y
                 Y = X.T @ L

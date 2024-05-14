@@ -9,9 +9,9 @@ import numpy as np
 from tqdm import tqdm
 
 # from lora.models.roberta_pretrained import get_model
-from lora.models.roberta_scratch import get_model
-from lora.utils import init_torch_seeds
-from lora.utils import linear_schedule_with_warmup
+from src.models.roberta_scratch import get_model
+from src.utils import init_torch_seeds
+from src.utils import linear_schedule_with_warmup
 
 class Trainer:
     def __init__(self, args, log) -> None:

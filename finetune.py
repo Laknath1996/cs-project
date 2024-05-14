@@ -1,6 +1,6 @@
 import torch
 import hydra
-from lora.trainer import Trainer
+from src.trainer import Trainer
 import logging
 
 log = logging.getLogger(__name__)

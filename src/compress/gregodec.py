@@ -149,7 +149,7 @@ class GreGoDec:
         return X, Y, S, error
 
 def main():
-    from lora.models.roberta_pretrained import get_model   
+    from src.models.roberta_pretrained import get_model   
     from omegaconf import OmegaConf
     import numpy as np
     from scipy.special import softmax

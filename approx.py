@@ -1,4 +1,4 @@
-from lora.models.roberta_scratch import get_model
+from src.models.roberta_scratch import get_model
 from omegaconf import OmegaConf
 from transformers import RobertaTokenizer
 from datasets import load_dataset

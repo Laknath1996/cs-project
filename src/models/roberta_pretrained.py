@@ -4,7 +4,7 @@ Need to remove the pooling layer from roberta before the classification head
 import torch
 import torch.nn as nn
 from transformers import RobertaModel
-from lora.layers.vanilla import Linear
+from src.layers.vanilla import Linear
 
 class RoBERTaClassifier(torch.nn.Module):
     def __init__(self, args):

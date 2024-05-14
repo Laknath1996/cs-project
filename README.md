@@ -1,6 +1,6 @@
 # Exploring Low-Rank and Sparse Approximations for Transformers
 
-Course project for EN.520.648 Compressed Sensing &amp; Sparse Recovery group project at JHU. This repo contains code for implementing robust PCA [1] and GreGoDec [2, 3] for finding approximations for the weight matrices in the Transformer attention layers.
+Course project for EN.520.648 Compressed Sensing &amp; Sparse Recovery group project at JHU. This repo contains code for implementing truncated SVD, robust PCA [1] and GreGoDec [2, 3] for finding approximations for the weight matrices in the Transformer attention layers.
 
 Group: Ashwin De Silva (@Laknath1996), Esther Whang (@EstherWhang)
 

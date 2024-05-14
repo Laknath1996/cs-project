@@ -6,6 +6,8 @@ Group: Ashwin De Silva (@Laknath1996), Esther Whang (@EstherWhang)
 
 Instructor: Prof. Trac Duy Tran
 
+[[Report]](https://github.com/Laknath1996/cs-project/tree/main/assets/report.pdf) [[Slides]](https://github.com/Laknath1996/cs-project/tree/main/assets/slides.pdf)
+
 ### References
 
 [1] Candès, Emmanuel J., et al. "Robust principal component analysis?." Journal of the ACM (JACM) 58.3 (2011): 1-37.
